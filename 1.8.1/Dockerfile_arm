@@ -1,0 +1,24 @@
+FROM resin/rpi-raspbian:jessie
+
+RUN echo "deb http://archive.raspberrypi.org/debian/ jessie main ui" >> /etc/apt/sources.list
+RUN apt-get update -y
+RUN apt-get install -y wget unzip oracle-java8-jdk
+
+RUN mkdir /opt/openhab
+
+EXPOSE 8080
+
+RUN wget --no-check-certificate https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-addons.zip -O /tmp/oh-addons.zip \
+    && wget --no-check-certificate https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-demo.zip -O /tmp/oh-demo.zip \
+    && wget --no-check-certificate https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-runtime.zip -O /tmp/oh-runtime.zip \
+    && unzip -x /tmp/oh-runtime.zip -d /opt/openhab \
+    && unzip -x /tmp/oh-addons.zip -d /opt/openhab/allAddons \
+    && unzip -x /tmp/oh-demo.zip -d /opt/openhab/demoData
+
+RUN cp -R /opt/openhab/configurations /opt/openhab/configurations_template
+
+COPY ./scripts/startOh.sh /opt/openhab/startOh.sh
+
+VOLUME ["/opt/openhab/configurations", "/opt/openhab/etc/rrd4j"]
+
+CMD sh /opt/openhab/startOh.sh
