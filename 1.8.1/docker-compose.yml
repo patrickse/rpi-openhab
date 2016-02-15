@@ -1,0 +1,4 @@
+openhab:
+#  build: ./Dockerfile_x86
+  image: patrickse/openhab:v1.8.1
+  ports: ['8081:8080']

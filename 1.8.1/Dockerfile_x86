@@ -19,8 +19,10 @@ RUN wget https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-ad
     && unzip -x /tmp/oh-addons.zip -d /opt/openhab/allAddons \
     && unzip -x /tmp/oh-demo.zip -d /opt/openhab/demoData
 
-COPY scripts/runDemo.sh /opt/openhab/runDemo.sh
+RUN cp -R /opt/openhab/configurations /opt/openhab/configurations_template
+
+COPY scripts/startOh.sh /opt/openhab/startOh.sh
 
 VOLUME ["/opt/openhab/configurations", "/opt/openhab/etc/rrd4j"]
 
-CMD /opt/openhab/start.sh
+CMD /opt/openhab/startOh.sh
