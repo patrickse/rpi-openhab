@@ -1,0 +1,26 @@
+FROM debian:jessie
+
+RUN echo "deb http://http.debian.net/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
+    && apt-get update -y \
+    && apt-get install -y \
+        openjdk-8-jre-headless \
+        # openjdk-8-jdk \
+        wget \
+        unzip
+
+RUN mkdir /opt/openhab
+
+EXPOSE 8080
+
+RUN wget https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-addons.zip -O /tmp/oh-addons.zip \
+    && wget https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-demo.zip -O /tmp/oh-demo.zip \
+    && wget https://bintray.com/artifact/download/openhab/bin/distribution-1.8.1-runtime.zip -O /tmp/oh-runtime.zip \
+    && unzip -x /tmp/oh-runtime.zip -d /opt/openhab \
+    && unzip -x /tmp/oh-addons.zip -d /opt/openhab/allAddons \
+    && unzip -x /tmp/oh-demo.zip -d /opt/openhab/demoData
+
+COPY scripts/runDemo.sh /opt/openhab/runDemo.sh
+
+VOLUME ["/opt/openhab/configurations", "/opt/openhab/etc/rrd4j"]
+
+CMD /opt/openhab/start.sh
